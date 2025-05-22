@@ -1,0 +1,17 @@
+{
+  "name": "konnect_e2e_testing",
+  "version": "1.0.0",
+  "description": "The testings for Konnect releases",
+  "main": "",
+  "scripts": {
+    "start": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-puppeteer": "^11.0.0",
+    "jest-puppeteer": "^11.0.0",
+    "puppeteer-core": "^24.9.0"
+  }
+}
