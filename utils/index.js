@@ -56,8 +56,23 @@ async function waitForAppReady(timeoutMs = 10000) {
 }
 
 async function connectPuppeteer() {
+  const wsEndpoint = await new Promise((resolve, reject) => {
+    http.get(`${DEBUG_URL}/json/version`, (res) => {
+      let data = '';
+      res.on('data', (chunk) => data += chunk);
+      res.on('end', () => {
+        try {
+          const response = JSON.parse(data);
+          resolve(response.webSocketDebuggerUrl);
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }).on('error', reject);
+  });
+
   return puppeteer.connect({
-    browserURL: DEBUG_URL,
+    browserWSEndpoint: wsEndpoint,
     defaultViewport: null
   });
 }
