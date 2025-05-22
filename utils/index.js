@@ -8,13 +8,20 @@ const path = require('path');
 const DEBUG_PORT = 9222;
 const APP_PATH = process.env.APP_PATH;
 const DEBUG_URL = `http://127.0.0.1:${DEBUG_PORT}`;
+const IS_MAC = process.platform === 'darwin';
+const IS_WIN = process.platform === 'win32';
 
 async function startApp() {
   await new Promise((resolve, reject) => {
-    exec(
-      `open -a "${APP_PATH}" --args --remote-debugging-port=${DEBUG_PORT}`,
-      (err) => (err ? reject(err) : resolve())
-    );
+    let cmd;
+    if (IS_MAC) {
+      cmd = `open -a "${APP_PATH}" --args --remote-debugging-port=${DEBUG_PORT}`;
+    } else if (IS_WIN) {
+      cmd = `"${APP_PATH}" --remote-debugging-port=${DEBUG_PORT}`;
+    } else {
+      return reject(new Error('Unsupported OS'));
+    }
+    exec(cmd, (err) => (err ? reject(err) : resolve()));
   });
 }
 
@@ -57,7 +64,15 @@ async function connectPuppeteer() {
 
 async function closeApp() {
   await new Promise((resolve) => {
-    exec(`killall "Kensington Konnect™"`, () => resolve());
+    let cmd;
+    if (IS_MAC) {
+      cmd = `killall "Kensington Konnect™"`;
+    } else if (IS_WIN) {
+      cmd = `taskkill /IM "Kensington Konnect™.exe" /F`;
+    } else {
+      return resolve(); // unsupported OS, do nothing
+    }
+    exec(cmd, () => resolve());
   });
 }
 
@@ -86,5 +101,7 @@ module.exports = {
   saveScreenshot,
   DEBUG_PORT,
   APP_PATH,
-  DEBUG_URL
+  DEBUG_URL,
+  IS_MAC,
+  IS_WIN
 }; 
