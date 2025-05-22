@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { exec } = require('child_process');
 const http = require('http');
 const puppeteer = require('puppeteer-core');
@@ -5,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 
 const DEBUG_PORT = 9222;
-const APP_PATH = "/Applications/Kensington Konnect™.app";
+const APP_PATH = process.env.APP_PATH;
 const DEBUG_URL = `http://127.0.0.1:${DEBUG_PORT}`;
 
 async function startApp() {
